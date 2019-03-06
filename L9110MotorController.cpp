@@ -27,23 +27,63 @@ OTHER DEALINGS IN THE SOFTWARE.
 #include "Arduino.h"
 #include "L9110MotorController.h"
 
-void L9110MotorController::Stop()
+L9110MotorController::L9110MotorController(byte motorA_pwm, byte motorA_dir,byte motorB_pwm, byte motorB_dir, int speed)
 {
-   digitalWrite(motorA.lB_dir, LOW);
-   analogWrite( motorA.lA_pwm, LOW);
+   motorA.dir = motorA_dir;  
+   motorA.pwm = motorA_pwm; //1A
+    
+   motorB.dir = motorB_dir; //1B
+   motorB.pwm = motorB_pwm; //1A
 
-   digitalWrite(motorB.lB_dir, LOW);
-   analogWrite( motorB.lA_pwm, LOW);
+   pinMode(motorA.pwm, OUTPUT);     
+   pinMode(motorA.dir, OUTPUT);
+   digitalWrite(motorA.pwm, LOW);
+   digitalWrite(motorA.dir, LOW);
+
+   pinMode(motorB.pwm, OUTPUT);     
+   pinMode(motorB.dir, OUTPUT);
+   digitalWrite(motorB.pwm, LOW);
+   digitalWrite(motorB.dir, LOW);
+
+   this->speed = speed;
 }
 
+void L9110MotorController::Stop()
+{
+   digitalWrite(motorA.dir, LOW);
+   analogWrite( motorA.pwm, LOW);
+
+   digitalWrite(motorB.dir, LOW);
+   analogWrite( motorB.pwm, LOW);
+}
+
+void L9110MotorController::MotorATurn()
+{
+   byte rspeed = 255-speed;
+  
+   digitalWrite(motorA.dir, DIR_FORWARD);
+   analogWrite(motorA.pwm, rspeed);
+
+   digitalWrite(motorB.dir, DIR_BACKWARD);
+   analogWrite(motorB.pwm, rspeed);
+}
+void L9110MotorController::MotorBTurn()
+{
+   byte rspeed = 255-speed;
+   digitalWrite(motorB.dir, DIR_FORWARD);
+   analogWrite(motorB.pwm, rspeed);
+
+   digitalWrite(motorA.dir, DIR_BACKWARD);
+   analogWrite(motorA.pwm, rspeed);
+}
 
 void L9110MotorController::SetDir(L9110_MOTOR_DIRECTION dir)
 {
    byte rspeed = ( (dir == DIR_FORWARD) ? 255-speed : speed);
   
-   digitalWrite(motorA. lB_dir, dir);
-   analogWrite(motorA.lA_pwm, rspeed);
+   digitalWrite(motorA.dir, dir);
+   analogWrite(motorA.pwm, rspeed);
 
-   digitalWrite(motorB.lB_dir, dir);
-   analogWrite(motorB.lA_pwm, rspeed);
+   digitalWrite(motorB.dir, dir);
+   analogWrite(motorB.pwm, rspeed);
 }

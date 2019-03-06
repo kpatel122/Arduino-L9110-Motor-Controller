@@ -33,22 +33,24 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 typedef struct MOTOR_PINS
 {
-  byte lA_pwm; //1A
-  byte lB_dir; //1B
+  byte pwm; //1A
+  byte dir; //1B
 }MOTOR_PINS;
 
 enum L9110_MOTOR_DIRECTION
 {
-    DIR_FORWARD,
-    DIR_BACKWARD
+    DIR_FORWARD = HIGH,
+    DIR_BACKWARD = LOW
 };
 
 class L9110MotorController
 {
   public:
-    L9110MotorController();
+    L9110MotorController(byte motorA_pwm, byte motorA_dir,byte motorB_pwm, byte motorB_dir, int speed);
     void Stop();
     void SetDir(L9110_MOTOR_DIRECTION dir);
+    void MotorATurn();
+    void MotorBTurn();
     void SetSpeed(int newSpeed){this->speed = newSpeed;}
     int GetSpeed(){return speed;}
   private:
